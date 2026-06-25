@@ -1,5 +1,5 @@
 const API_KEY = process.env.GOOGLE_AI_API_KEY || '';
-const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const MODEL_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 async function fetchWithRetry(url: string, body: object, maxRetries = 3): Promise<any> {
   for (let i = 0; i < maxRetries; i++) {
@@ -16,8 +16,6 @@ async function fetchWithRetry(url: string, body: object, maxRetries = 3): Promis
     throw new Error(`Gemini API error: ${res.status}`);
   }
 }
-
-const MODEL_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 export async function generateFlashcards(text: string): Promise<{ question: string; answer: string }[]> {
   const prompt = `Generate flashcards from this text. Return a JSON array of objects with "question" and "answer" fields. Each card should test one key concept. Return ONLY valid JSON, no markdown, no code fences.
