@@ -9,7 +9,7 @@ async function fetchWithRetry(url: string, body: object, maxRetries = 3): Promis
       body: JSON.stringify(body),
     });
     if (res.ok) return res.json();
-    if (res.status === 429 && i < maxRetries - 1) {
+    if ((res.status === 429 || res.status === 503) && i < maxRetries - 1) {
       await new Promise(r => setTimeout(r, (i + 1) * 2000));
       continue;
     }
