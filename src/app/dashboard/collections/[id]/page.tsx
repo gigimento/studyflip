@@ -12,6 +12,8 @@ export default function CollectionPage() {
   const [text, setText] = useState('');
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     const sessionId = localStorage.getItem('sessionId');
@@ -43,6 +45,15 @@ export default function CollectionPage() {
     });
   }
 
+  async function shareCollection() {
+    setSharing(true);
+    const sessionId = localStorage.getItem('sessionId');
+    const res = await fetch(`/api/collections/${id}/share`, { method: 'POST', headers: { 'x-session-id': sessionId || '' } });
+    const data = await res.json();
+    if (data.url) setShareUrl(window.location.origin + data.url);
+    setSharing(false);
+  }
+
   function updateCard(index: number, field: 'question' | 'answer', value: string) {
     const updated = [...cards];
     updated[index] = { ...updated[index], [field]: value };
@@ -62,6 +73,14 @@ export default function CollectionPage() {
         <Button onClick={generateCards} disabled={loading} className="mt-2">
           {loading ? 'Generating...' : 'Generate Flashcards'}
         </Button>
+        {cards.length > 0 && (
+          <Button onClick={shareCollection} disabled={sharing} variant="secondary" className="mt-2 ml-2">
+            {sharing ? 'Sharing...' : shareUrl ? 'Copied!' : 'Share'}
+          </Button>
+        )}
+        {shareUrl && (
+          <p className="text-xs text-[#8BA5BE] mt-2">{shareUrl}</p>
+        )}
       </div>
 
       {cards.length > 0 && (
