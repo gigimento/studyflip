@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
@@ -12,13 +12,34 @@ export default function StudyPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [reviewed, setReviewed] = useState(false);
+
+  const sessionId = typeof window !== 'undefined' ? localStorage.getItem('sessionId') : null;
 
   useEffect(() => {
-    const sessionId = localStorage.getItem('sessionId');
     fetch(`/api/collections/${id}/cards`, { headers: { 'x-session-id': sessionId || '' } })
       .then(r => r.ok ? r.json() : [])
       .then(setCards);
-  }, [id]);
+  }, [id, sessionId]);
+
+  const submitReview = useCallback(async (quality: number) => {
+    const card = cards[index];
+    if (!card) return;
+    await fetch('/api/cards/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-session-id': sessionId || '' },
+      body: JSON.stringify({ cardId: card.id, quality }),
+    });
+    setReviewed(true);
+  }, [cards, index, sessionId]);
+
+  function nextCard() {
+    if (index < cards.length - 1) {
+      setIndex(i => i + 1);
+      setFlipped(false);
+      setReviewed(false);
+    }
+  }
 
   if (cards.length === 0) {
     return (
@@ -39,7 +60,7 @@ export default function StudyPage() {
       </div>
 
       <div
-        onClick={() => setFlipped(!flipped)}
+        onClick={() => { if (!flipped) setFlipped(true); }}
         className="bg-[#1e1d24] rounded-2xl p-8 min-h-[250px] flex items-center justify-center cursor-pointer select-none mb-6 border border-[#8BA5BE]/10 hover:border-[#E19C63]/50 transition-all"
       >
         {!flipped ? (
@@ -49,19 +70,26 @@ export default function StudyPage() {
         )}
       </div>
 
-      <div className="flex justify-between">
-        <Button
-          variant="secondary"
-          onClick={() => { setFlipped(false); setIndex(Math.max(0, index - 1)); }}
-          disabled={index === 0}
-        >
-          Previous
+      {flipped && !reviewed && (
+        <div className="flex gap-3 mb-4">
+          <Button variant="secondary" onClick={() => submitReview(1)} className="flex-1 bg-red-900/40 hover:bg-red-900/60 text-red-300 border border-red-500/30">
+            Didn't Know
+          </Button>
+          <Button onClick={() => submitReview(4)} className="flex-1 bg-green-900/40 hover:bg-green-900/60 text-green-300 border border-green-500/30">
+            Knew It
+          </Button>
+        </div>
+      )}
+
+      {reviewed && (
+        <Button onClick={nextCard} className="w-full mb-4">
+          {index < cards.length - 1 ? 'Next Card' : 'Finished'}
         </Button>
-        <Button
-          onClick={() => { setFlipped(false); setIndex(Math.min(cards.length - 1, index + 1)); }}
-          disabled={index === cards.length - 1}
-        >
-          Next
+      )}
+
+      <div className="flex justify-between">
+        <Button variant="secondary" onClick={() => { setFlipped(false); setReviewed(false); setIndex(Math.max(0, index - 1)); }} disabled={index === 0}>
+          Previous
         </Button>
       </div>
     </div>
