@@ -14,6 +14,7 @@ export default function CollectionPage() {
   const [loading, setLoading] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
   const [sharing, setSharing] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const sessionId = localStorage.getItem('sessionId');
@@ -25,6 +26,7 @@ export default function CollectionPage() {
   async function generateCards() {
     if (!text.trim()) return;
     setLoading(true);
+    setError('');
     const sessionId = localStorage.getItem('sessionId');
     const res = await fetch(`/api/collections/${id}/cards/generate`, {
       method: 'POST',
@@ -33,6 +35,7 @@ export default function CollectionPage() {
     });
     const data = await res.json();
     if (data.cards) setCards(data.cards);
+    if (data.error) setError(data.error);
     setLoading(false);
   }
 
@@ -81,6 +84,7 @@ export default function CollectionPage() {
         {shareUrl && (
           <p className="text-xs text-[#8BA5BE] mt-2">{shareUrl}</p>
         )}
+        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
       </div>
 
       {cards.length > 0 && (

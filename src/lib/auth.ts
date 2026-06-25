@@ -22,14 +22,15 @@ export async function loginUser(email: string) {
 export async function getSession(sessionId: string) {
   const { data: session } = await supabase
     .from('sf_sessions')
-    .select('id, user_id, sf_users!inner(email, name)')
+    .select('id, user_id')
     .eq('id', sessionId)
     .single();
   if (!session) return null;
-  return {
-    id: session.id,
-    user_id: session.user_id,
-    email: (session as any).sf_users.email,
-    name: (session as any).sf_users.name,
-  };
+  const { data: user } = await supabase
+    .from('sf_users')
+    .select('email, name')
+    .eq('id', session.user_id)
+    .single();
+  if (!user) return null;
+  return { id: session.id, user_id: session.user_id, email: user.email, name: user.name };
 }
