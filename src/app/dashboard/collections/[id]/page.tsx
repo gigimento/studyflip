@@ -40,12 +40,16 @@ export default function CollectionPage() {
   }
 
   async function saveCards() {
+    setError('');
     const sessionId = localStorage.getItem('sessionId');
-    await fetch(`/api/collections/${id}/cards`, {
+    const res = await fetch(`/api/collections/${id}/cards`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-session-id': sessionId || '' },
       body: JSON.stringify({ cards }),
     });
+    const data = await res.json();
+    if (data.error) return setError(data.error);
+    if (Array.isArray(data)) setCards(data);
   }
 
   async function shareCollection() {
