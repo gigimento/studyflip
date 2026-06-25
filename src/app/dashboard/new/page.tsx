@@ -23,16 +23,16 @@ export default function NewCollectionPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6">New Collection</h1>
+      <h1 className="text-2xl font-extrabold text-[#3c3c3c] mb-6">New Collection</h1>
       <input
         type="text" placeholder="Collection Title" value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg bg-[#1e1d24] border border-[#8BA5BE]/30 text-white mb-3 outline-none focus:border-[#E19C63]"
+        className="w-full px-4 py-3 rounded-xl bg-white border-2 border-[#e5e5e5] text-[#3c3c3c] mb-3 outline-none focus:border-[#1cb0f6] transition-colors"
       />
       <input
         type="text" placeholder="Subject (optional)" value={subject}
         onChange={(e) => setSubject(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg bg-[#1e1d24] border border-[#8BA5BE]/30 text-white mb-6 outline-none focus:border-[#E19C63]"
+        className="w-full px-4 py-3 rounded-xl bg-white border-2 border-[#e5e5e5] text-[#3c3c3c] mb-6 outline-none focus:border-[#1cb0f6] transition-colors"
       />
       <Button onClick={create}>Create Collection</Button>
     </div>

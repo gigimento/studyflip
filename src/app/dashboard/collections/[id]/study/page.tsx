@@ -44,7 +44,7 @@ export default function StudyPage() {
   if (cards.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#8BA5BE] mb-4">No cards in this collection.</p>
+        <p className="text-[#777777] mb-4">No cards in this collection.</p>
         <Button onClick={() => router.push(`/dashboard/collections/${id}`)}>Add Cards</Button>
       </div>
     );
@@ -55,27 +55,29 @@ export default function StudyPage() {
   return (
     <div className="max-w-lg mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={() => router.push(`/dashboard/collections/${id}`)} className="text-[#8BA5BE] hover:text-white cursor-pointer">&larr; Back</button>
-        <span className="text-[#8BA5BE] text-sm">{index + 1} / {cards.length}</span>
+        <button onClick={() => router.push(`/dashboard/collections/${id}`)} className="text-[#777777] font-bold hover:text-[#3c3c3c] cursor-pointer">&larr; Back</button>
+        <div className="flex items-center gap-2">
+          <div className="bg-[#dbf8c5] text-[#58a700] text-sm font-bold px-3 py-1 rounded-full">{index + 1} / {cards.length}</div>
+        </div>
       </div>
 
       <div
         onClick={() => { if (!flipped) setFlipped(true); }}
-        className="bg-[#1e1d24] rounded-2xl p-8 min-h-[250px] flex items-center justify-center cursor-pointer select-none mb-6 border border-[#8BA5BE]/10 hover:border-[#E19C63]/50 transition-all"
+        className="bg-white border-2 border-[#e5e5e5] rounded-2xl p-8 min-h-[250px] flex items-center justify-center cursor-pointer select-none mb-6 hover:border-[#58cc02] transition-all"
       >
         {!flipped ? (
-          <p className="text-xl font-semibold text-center">{card.question}</p>
+          <p className="text-xl font-bold text-center text-[#3c3c3c]">{card.question}</p>
         ) : (
-          <p className="text-lg text-center text-[#8BA5BE]">{card.answer}</p>
+          <p className="text-lg text-center text-[#777777]">{card.answer}</p>
         )}
       </div>
 
       {flipped && !reviewed && (
         <div className="flex gap-3 mb-4">
-          <Button variant="secondary" onClick={() => submitReview(1)} className="flex-1 bg-red-900/40 hover:bg-red-900/60 text-red-300 border border-red-500/30">
+          <Button variant="danger" onClick={() => submitReview(1)} className="flex-1">
             Didn't Know
           </Button>
-          <Button onClick={() => submitReview(4)} className="flex-1 bg-green-900/40 hover:bg-green-900/60 text-green-300 border border-green-500/30">
+          <Button onClick={() => submitReview(4)} className="flex-1">
             Knew It
           </Button>
         </div>

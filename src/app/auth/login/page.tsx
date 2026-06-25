@@ -24,14 +24,14 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6">
-      <div className="bg-[#1e1d24] p-8 rounded-2xl w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-6">{isRegister ? 'Create Account' : 'Sign In'}</h2>
+      <div className="bg-white border-2 border-[#e5e5e5] rounded-2xl p-8 w-full max-w-sm">
+        <h2 className="text-2xl font-extrabold mb-6 text-[#3c3c3c]">{isRegister ? 'Create Account' : 'Sign In'}</h2>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg bg-[#27262E] border border-[#8BA5BE]/30 text-white mb-3 outline-none focus:border-[#E19C63]"
+          className="w-full px-4 py-3 rounded-xl bg-[#f7f7f7] border-2 border-[#e5e5e5] text-[#3c3c3c] mb-3 outline-none focus:border-[#1cb0f6] transition-colors"
         />
         {isRegister && (
           <input
@@ -39,15 +39,15 @@ export default function LoginPage() {
             placeholder="Your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-[#27262E] border border-[#8BA5BE]/30 text-white mb-3 outline-none focus:border-[#E19C63]"
+            className="w-full px-4 py-3 rounded-xl bg-[#f7f7f7] border-2 border-[#e5e5e5] text-[#3c3c3c] mb-3 outline-none focus:border-[#1cb0f6] transition-colors"
           />
         )}
         <Button onClick={handleSubmit} className="w-full mb-3">
           {isRegister ? 'Create Account' : 'Sign In'}
         </Button>
-        <p className="text-sm text-[#8BA5BE] text-center">
+        <p className="text-sm text-[#777777] text-center">
           {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button onClick={() => setIsRegister(!isRegister)} className="text-[#E19C63] hover:underline cursor-pointer">
+          <button onClick={() => setIsRegister(!isRegister)} className="text-[#58cc02] font-bold hover:underline cursor-pointer">
             {isRegister ? 'Sign In' : 'Register'}
           </button>
         </p>

@@ -75,45 +75,45 @@ export default function CollectionPage() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={6}
-          className="w-full px-4 py-3 rounded-lg bg-[#1e1d24] border border-[#8BA5BE]/30 text-white outline-none focus:border-[#E19C63] resize-none"
+          className="w-full px-4 py-3 rounded-xl bg-white border-2 border-[#e5e5e5] text-[#3c3c3c] outline-none focus:border-[#1cb0f6] resize-none transition-colors"
         />
-        <Button onClick={generateCards} disabled={loading} className="mt-2">
-          {loading ? 'Generating...' : 'Generate Flashcards'}
-        </Button>
-        {cards.length > 0 && (
-          <Button onClick={shareCollection} disabled={sharing} variant="secondary" className="mt-2 ml-2">
-            {sharing ? 'Sharing...' : shareUrl ? 'Copied!' : 'Share'}
+        <div className="flex flex-wrap gap-2 mt-3">
+          <Button onClick={generateCards} disabled={loading}>
+            {loading ? 'Generating...' : 'Generate Flashcards'}
           </Button>
-        )}
+          {cards.length > 0 && (
+            <>
+              <Button onClick={saveCards} variant="secondary">Save Cards</Button>
+              <Button onClick={() => router.push(`/dashboard/collections/${id}/study`)}>Study</Button>
+              <Button onClick={() => router.push(`/dashboard/collections/${id}/quiz`)}>Quiz</Button>
+              <Button onClick={shareCollection} disabled={sharing} variant="secondary">
+                {sharing ? 'Sharing...' : shareUrl ? 'Copied!' : 'Share'}
+              </Button>
+            </>
+          )}
+        </div>
         {shareUrl && (
-          <p className="text-xs text-[#8BA5BE] mt-2">{shareUrl}</p>
+          <p className="text-sm text-[#777777] mt-2">Link: {shareUrl}</p>
         )}
-        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+        {error && <p className="text-sm text-[#ff4b4b] mt-2 font-bold">{error}</p>}
       </div>
 
       {cards.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Cards ({cards.length})</h2>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={saveCards}>Save Cards</Button>
-              <Button onClick={() => router.push(`/dashboard/collections/${id}/study`)}>Study</Button>
-              <Button onClick={() => router.push(`/dashboard/collections/${id}/quiz`)}>Quiz</Button>
-            </div>
-          </div>
+          <h2 className="text-lg font-bold text-[#3c3c3c] mb-4">Cards ({cards.length})</h2>
           <div className="space-y-3">
             {cards.map((card, i) => (
-              <div key={i} className="bg-[#1e1d24] p-4 rounded-xl">
+              <div key={i} className="bg-white border-2 border-[#e5e5e5] rounded-2xl p-4">
                 <input
                   value={card.question}
                   onChange={(e) => updateCard(i, 'question', e.target.value)}
-                  className="w-full bg-transparent font-semibold mb-2 outline-none border-b border-transparent focus:border-[#E19C63] pb-1"
+                  className="w-full bg-transparent font-bold text-[#3c3c3c] mb-2 outline-none border-b-2 border-transparent focus:border-[#1cb0f6] pb-1 transition-colors"
                 />
                 <textarea
                   value={card.answer}
                   onChange={(e) => updateCard(i, 'answer', e.target.value)}
                   rows={2}
-                  className="w-full bg-transparent text-sm text-[#8BA5BE] outline-none resize-none"
+                  className="w-full bg-transparent text-sm text-[#777777] outline-none resize-none"
                 />
               </div>
             ))}
