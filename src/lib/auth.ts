@@ -1,29 +1,35 @@
-import { getDb } from './db';
+import { supabase } from './supabase';
 
-export function createUser(email: string, name: string) {
-  const db = getDb();
+export async function createUser(email: string, name: string) {
   const id = crypto.randomUUID();
-  db.prepare('INSERT INTO users (id, email, name) VALUES (?, ?, ?)').run(id, email, name);
   const sessionId = crypto.randomUUID();
-  db.prepare('INSERT INTO sessions (id, user_id) VALUES (?, ?)').run(sessionId, id);
+  const { error: userError } = await supabase.from('sf_users').insert({ id, email, name });
+  if (userError) throw new Error(userError.message);
+  const { error: sessionError } = await supabase.from('sf_sessions').insert({ id: sessionId, user_id: id });
+  if (sessionError) throw new Error(sessionError.message);
   return { userId: id, sessionId };
 }
 
-export function loginUser(email: string) {
-  const db = getDb();
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as any;
+export async function loginUser(email: string) {
+  const { data: user } = await supabase.from('sf_users').select('id, name').eq('email', email).single();
   if (!user) return null;
   const sessionId = crypto.randomUUID();
-  db.prepare('INSERT INTO sessions (id, user_id) VALUES (?, ?)').run(sessionId, user.id);
+  const { error: sessionError } = await supabase.from('sf_sessions').insert({ id: sessionId, user_id: user.id });
+  if (sessionError) throw new Error(sessionError.message);
   return { userId: user.id, sessionId, name: user.name };
 }
 
-export function getSession(sessionId: string) {
-  const db = getDb();
-  const session = db.prepare(`
-    SELECT s.id, s.user_id, u.email, u.name
-    FROM sessions s JOIN users u ON s.user_id = u.id
-    WHERE s.id = ?
-  `).get(sessionId) as any;
-  return session || null;
+export async function getSession(sessionId: string) {
+  const { data: session } = await supabase
+    .from('sf_sessions')
+    .select('id, user_id, sf_users!inner(email, name)')
+    .eq('id', sessionId)
+    .single();
+  if (!session) return null;
+  return {
+    id: session.id,
+    user_id: session.user_id,
+    email: (session as any).sf_users.email,
+    name: (session as any).sf_users.name,
+  };
 }

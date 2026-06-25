@@ -6,6 +6,10 @@ export async function POST(req: NextRequest) {
   if (!email || !name) {
     return NextResponse.json({ error: 'Email and name required' }, { status: 400 });
   }
-  const result = createUser(email, name);
-  return NextResponse.json(result);
+  try {
+    const result = await createUser(email, name);
+    return NextResponse.json(result);
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }

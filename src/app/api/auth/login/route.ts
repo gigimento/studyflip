@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   if (!email) {
     return NextResponse.json({ error: 'Email required' }, { status: 400 });
   }
-  const result = loginUser(email);
+  const result = await loginUser(email);
   if (!result) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
